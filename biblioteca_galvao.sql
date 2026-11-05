@@ -1,65 +1,71 @@
--- Projeto de Banco de Dados: Biblioteca
--- Desenvolvido no curso Forma TI / Senac SP
--- Banco de dados MySQL para gerenciamento de bibliotecas, livros, leitores e empréstimos.
-
-CREATE DATABASE IF NOT EXISTS bibliotecagalvao;
+# =========================================================================
+# 1. CRIAÇÃO DO BANCO DE DADOS
+# =========================================================================
+CREATE DATABASE bibliotecagalvao;
 USE bibliotecagalvao;
 
+# =========================================================================-- =========================================================================
+
+# Tabela principal: Biblioteca
 CREATE TABLE Biblioteca (
-    id_biblioteca INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    orcamento_anual DOUBLE NOT NULL,
-    vagas_estudo INT NOT NULL,
-    possui_wifi BOOLEAN NOT NULL,
-    cidade VARCHAR(50) NOT NULL
+    id_biblioteca INT AUTO_INCREMENT PRIMARY KEY, # [INT] ID chave primária
+    nome VARCHAR(100) NOT NULL, # [STRING] Nome da biblioteca
+    orcamento_anual DOUBLE NOT NULL, # [DOUBLE] Orçamento da unidade
+    vagas_estudo INT NOT NULL, # [INT] Cadeiras disponíveis
+    possui_wifi BOOLEAN NOT NULL, # [BOOL] Se oferece internet grátis
+    cidade VARCHAR(50) NOT NULL # [STRING] Cidade onde se localiza
 );
 
--- Relacionamento 1:1 com Biblioteca
+# Relacionamento 1:1 com a tabela Biblioteca
 CREATE TABLE Detalhes_Biblioteca (
-    id_detalhe INT AUTO_INCREMENT PRIMARY KEY,
-    id_biblioteca INT UNIQUE NOT NULL,
-    politica_atraso VARCHAR(255),
-    nota_estrutura DOUBLE NOT NULL,
-    possui_refeitorio BOOLEAN NOT NULL,
-    capacidade_livros INT NOT NULL,
+    id_detalhe INT AUTO_INCREMENT PRIMARY KEY, # [INT] ID chave primária
+    id_biblioteca INT UNIQUE NOT NULL, # [INT] FK UNIQUE garante o relacionamento 1:1
+    politica_atraso VARCHAR(255), # [STRING] Texto descritivo da multa
+    nota_estrutura DOUBLE NOT NULL, # [DOUBLE] Avaliação do espaço físico
+    possui_refeitorio BOOLEAN NOT NULL, # [BOOL] Se há espaço para comer
+    capacidade_livros INT NOT NULL, # [INT] Limite do acervo físico
     FOREIGN KEY (id_biblioteca) REFERENCES Biblioteca(id_biblioteca)
-);
+);	
 
--- Relacionamento 1:N: uma biblioteca possui vários livros
+# Relacionamento 1:N com a tabela Biblioteca (Uma biblioteca tem vários livros)
 CREATE TABLE Livros (
-    id_livro INT AUTO_INCREMENT PRIMARY KEY,
-    id_biblioteca INT NOT NULL,
-    titulo VARCHAR(100) NOT NULL,
-    preco_custo DOUBLE NOT NULL,
-    disponivel_e_book BOOLEAN NOT NULL,
-    ano_publicacao INT NOT NULL,
+    id_livro INT AUTO_INCREMENT PRIMARY KEY, # [INT] ID chave primária
+    id_biblioteca INT NOT NULL, # [INT] FK regular para o 1:N
+    titulo VARCHAR(100) NOT NULL, # [STRING] Título da obra
+    preco_custo DOUBLE NOT NULL, # [DOUBLE] Valor de custo do livro
+    disponivel_e_book BOOLEAN NOT NULL, # [BOOL] Se há versão digital
+    ano_publicacao INT NOT NULL, # [INT] Ano de lançamento
     FOREIGN KEY (id_biblioteca) REFERENCES Biblioteca(id_biblioteca)
 );
 
--- Tabela de leitores, usada no relacionamento N:N
+# Tabela de Leitores (Necessária para compor o relacionamento N:N)
 CREATE TABLE Leitores (
-    id_leitor INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    limite_credito DOUBLE NOT NULL,
-    primeiro_cadastro BOOLEAN NOT NULL,
-    idade INT NOT NULL,
-    genero_preferido VARCHAR(50) NOT NULL
+    id_leitor INT AUTO_INCREMENT PRIMARY KEY, # [INT] ID chave primária
+    nome VARCHAR(100) NOT NULL, # [STRING] Nome do leitor
+    limite_credito DOUBLE NOT NULL, # [DOUBLE] Valor limite para taxas pendentes
+    primeiro_cadastro BOOLEAN NOT NULL, # [BOOL] Se é um leitor novo
+    idade INT NOT NULL, # [INT] Idade do leitor
+    genero_preferido VARCHAR(50) NOT NULL # [STRING] Gênero literário favorito
 );
 
--- Relacionamento N:N entre livros e leitores por meio de Empréstimos
+# Relacionamento N:N entre Livros e Leitores (Tabela intermediária de Empréstimos)
 CREATE TABLE Emprestimos (
-    id_emprestimo INT AUTO_INCREMENT PRIMARY KEY,
-    id_livro INT NOT NULL,
-    id_leitor INT NOT NULL,
-    taxa_seguro DOUBLE NOT NULL,
-    devolvido BOOLEAN NOT NULL,
-    prazo_dias INT NOT NULL,
+    id_emprestimo INT AUTO_INCREMENT PRIMARY KEY, # [INT] ID chave primária
+    id_livro INT NOT NULL, # [INT] FK para Livros
+    id_leitor INT NOT NULL, # [INT] FK para Leitores
+    taxa_seguro DOUBLE NOT NULL, # [DOUBLE] Taxa cobrada pelo empréstimo
+    devolvido BOOLEAN NOT NULL, # [BOOL] Status da devolução
+    prazo_dias INT NOT NULL, # [INT] Tempo estipulado de posse
     FOREIGN KEY (id_livro) REFERENCES Livros(id_livro),
     FOREIGN KEY (id_leitor) REFERENCES Leitores(id_leitor)
 );
 
--- Dados de exemplo: 18 bibliotecas
-INSERT INTO Biblioteca (nome, orcamento_anual, vagas_estudo, possui_wifi, cidade) VALUES
+# =========================================================================
+# INSERTS DO LINGUINI
+# =========================================================================
+
+# Inserindo 18 Bibliotecas
+INSERT INTO Biblioteca (nome, orcamento_anual, vagas_estudo, possui_wifi, cidade) VALUES 
 ('Biblioteca Central', 150000.50, 45, TRUE, 'São Paulo'),
 ('Art & Saber', 120000.00, 20, TRUE, 'Rio de Janeiro'),
 ('Acervo das Artes', 85000.75, 12, FALSE, 'Belo Horizonte'),
@@ -79,7 +85,8 @@ INSERT INTO Biblioteca (nome, orcamento_anual, vagas_estudo, possui_wifi, cidade
 ('Aquarela das Letras', 115000.70, 28, TRUE, 'Natal'),
 ('Estilo Urbano', 102000.10, 16, TRUE, 'Maceió');
 
-INSERT INTO Detalhes_Biblioteca (id_biblioteca, politica_atraso, nota_estrutura, possui_refeitorio, capacidade_livros) VALUES
+# Inserindo 18 Detalhes de Bibliotecas (Relacionamento 1:1)
+INSERT INTO Detalhes_Biblioteca (id_biblioteca, politica_atraso, nota_estrutura, possui_refeitorio, capacidade_livros) VALUES 
 (1, 'Multa diária de R$2,00 por item', 4.9, TRUE, 10000),
 (2, 'Suspensão de 7 dias em caso de atraso', 4.7, FALSE, 8000),
 (3, 'Permite apenas uma renovação online', 4.5, FALSE, 5000),
@@ -99,7 +106,8 @@ INSERT INTO Detalhes_Biblioteca (id_biblioteca, politica_atraso, nota_estrutura,
 (17, 'Aviso por WhatsApp automatizado', 4.6, TRUE, 8000),
 (18, 'Não renovável em época de exames', 4.5, FALSE, 7000);
 
-INSERT INTO Livros (id_biblioteca, titulo, preco_custo, disponivel_e_book, ano_publicacao) VALUES
+# Inserindo 18 Livros (Relacionamento 1:N - distribuídos pelas bibliotecas)
+INSERT INTO Livros (id_biblioteca, titulo, preco_custo, disponivel_e_book, ano_publicacao) VALUES 
 (1, 'Dom Casmurro', 45.00, TRUE, 1899),
 (1, 'Memórias Póstumas', 55.00, FALSE, 1881),
 (2, 'O Cortiço', 38.50, TRUE, 1890),
@@ -109,7 +117,7 @@ INSERT INTO Livros (id_biblioteca, titulo, preco_custo, disponivel_e_book, ano_p
 (6, 'Grande Sertão: Veredas', 89.90, TRUE, 1956),
 (7, 'Vidas Secas', 35.00, FALSE, 1938),
 (8, 'Ensaio Sobre a Cegueira', 75.00, TRUE, 1995),
-(9, 'O Primo Basílio', 48.75, FALSE, 1878),
+(9, 'O Primo Basílio', 48.75, FALSE, 1878),x'
 (10, 'A Hora da Estrela', 29.00, TRUE, 1977),
 (11, 'Macunaíma', 34.00, FALSE, 1928),
 (12, 'Sagarana', 53.50, TRUE, 1946),
@@ -119,7 +127,8 @@ INSERT INTO Livros (id_biblioteca, titulo, preco_custo, disponivel_e_book, ano_p
 (16, 'Menino do Engenho', 31.00, FALSE, 1932),
 (17, 'Fogo Morto', 44.00, TRUE, 1943);
 
-INSERT INTO Leitores (nome, limite_credito, primeiro_cadastro, idade, genero_preferido) VALUES
+# Inserindo 18 Leitores
+INSERT INTO Leitores (nome, limite_credito, primeiro_cadastro, idade, genero_preferido) VALUES 
 ('Marcos Jr', 50.00, TRUE, 22, 'Romance'),
 ('Aline Torres', 30.50, FALSE, 29, 'Poesia'),
 ('Bruno Guimarães', 150.00, FALSE, 34, 'Ficção Científica'),
@@ -139,7 +148,8 @@ INSERT INTO Leitores (nome, limite_credito, primeiro_cadastro, idade, genero_pre
 ('Pedro Scooby', 110.00, FALSE, 35, 'Aventura'),
 ('Renata Vascon', 85.00, FALSE, 42, 'História');
 
-INSERT INTO Emprestimos (id_livro, id_leitor, taxa_seguro, devolvido, prazo_dias) VALUES
+# Inserindo 18 Empréstimos (Relacionamento N:N - cruzando Livros e Leitores)
+INSERT INTO Emprestimos (id_livro, id_leitor, taxa_seguro, devolvido, prazo_dias) VALUES 
 (1, 1, 5.00, TRUE, 7),
 (2, 2, 8.00, TRUE, 14),
 (3, 3, 4.50, TRUE, 7),
@@ -159,25 +169,35 @@ INSERT INTO Emprestimos (id_livro, id_leitor, taxa_seguro, devolvido, prazo_dias
 (17, 17, 5.20, TRUE, 7),
 (1, 18, 7.50, TRUE, 10);
 
--- CONSULTAS SQL
+# =========================================================================
+# SELECTS DO LINGUINIIII
+# =========================================================================
 
--- Consulta 1: bibliotecas com Wi-Fi e pelo menos 20 vagas de estudo
-SELECT nome, cidade, vagas_estudo
-FROM Biblioteca
+# Consulta 1: Filtro Simples (Buscando em uma tabela usando BOOL e INT)
+# Retorna as bibliotecas que possuem Wi-Fi e têm pelo menos 20 vagas de estudo livres.
+SELECT nome, cidade, vagas_estudo 
+FROM Biblioteca 
 WHERE possui_wifi = TRUE AND vagas_estudo >= 20;
 
--- Consulta 2: bibliotecas com nota de estrutura e capacidade de livros
-SELECT B.nome AS Nome_Biblioteca, B.cidade,
-       D.nota_estrutura AS Estrutura,
-       D.capacidade_livros AS Capacidade
-FROM Biblioteca B
-INNER JOIN Detalhes_Biblioteca D ON B.id_biblioteca = D.id_biblioteca
+# Consulta 2: Relacionamento 1:1 (Biblioteca + Detalhes_Biblioteca)
+# Traz as informações básicas da biblioteca junto com sua nota de estrutura e capacidade total de livros.
+SELECT B.nome AS Nome_Biblioteca, B.cidade, D.nota_estrutura AS Estrutura, D.capacidade_livros AS Capacidade
+FROM Biblioteca B 
+INNER JOIN Detalhes_Biblioteca D ON B.id_biblioteca = D.id_biblioteca 
 ORDER BY D.nota_estrutura DESC;
 
--- Consulta 3: livros com custo superior a R$ 50,00 e suas bibliotecas
-SELECT L.titulo AS Livro, L.preco_custo AS Preco_Custo,
-       B.nome AS Nome_Biblioteca
-FROM Livros L
-INNER JOIN Biblioteca B ON L.id_biblioteca = B.id_biblioteca
-WHERE L.preco_custo > 50.00
-ORDER BY L.preco_custo DESC;
+# Consulta 3: Relacionamento 1:N (Biblioteca + Livros)
+# Lista os livros e a biblioteca à qual pertencem, filtrando por obras que custaram mais de R$ 50,00.
+SELECT L.titulo AS Livro, L.preco_custo AS Preco_Custo, B.nome AS Nome_Biblioteca 
+FROM Livros L 
+INNER JOIN Biblioteca B ON L.id_biblioteca = B.id_biblioteca 
+
+create table usuario (
+    id int PRIMARY KEY AUTO_INCREMENT,
+    email varchar(50),
+    usuario varchar(50),
+    senha varchar(50)
+);
+ 
+insert into usuario (email, usuario, senha) VALUES
+("Admin@gmail.com","admin","123adm");
