@@ -1,0 +1,2 @@
+using MySqlConnector;
+namespace biblioteca_galvao { internal class MySqlConnector { private static string connectionString = "Server=localhost;Port=3306;Database=bibliotecagalvao;User ID=root;Password=;"; public static MySqlConnection Conectar() { return new MySqlConnection(connectionString); } } }
