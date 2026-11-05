@@ -1,0 +1,1 @@
+namespace biblioteca_galvao { partial class TelaPrincipal { private System.ComponentModel.IContainer components=null; protected override void Dispose(bool disposing) { if(disposing && components!=null) components.Dispose(); base.Dispose(disposing); } private void InitializeComponent() { Text="TelaPrincipal"; ClientSize=new Size(800,450); } } }
