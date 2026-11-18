@@ -17,10 +17,15 @@ O banco de dados `bibliotecagalvao` representa um sistema de bibliotecas e cont�
 
 O projeto demonstra chaves primárias e estrangeiras, relacionamentos 1:1, 1:N e N:N, inserção de dados e consultas com filtros e `INNER JOIN`.
 
-## Como executar
+## Como importar o banco de dados
 1. Inicie o Apache e o MySQL no XAMPP.
 2. Abra o phpMyAdmin.
-3. Importe ou cole o conteúdo de `biblioteca_galvao.sql` na aba SQL.
+3. Importe ou cole o conteúdo de [`biblioteca_galvao.sql`](biblioteca_galvao.sql) na aba SQL.
 4. Execute o script.
 
 > Observação: o script cria o banco `bibliotecagalvao`. Execute-o em um ambiente de desenvolvimento e evite executá-lo em um banco que já contenha dados importantes.
+
+
+## Protótipo desktop em C#
+
+O repositório inclui um [protótipo Windows Forms](CSharp-Banco-de-Dados/README.md) com telas de login e cadastro. A autenticação depende da tabela `usuario`, que precisa ser configurada separadamente do script SQL acadêmico.
